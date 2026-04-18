@@ -1,0 +1,43 @@
+---
+# Tâches de durcissement (Hardening) de l'OS basées sur CIS Benchmarks
+# Assurant l'idempotence totale (le module effectue l'action uniquement si nécessaire)
+
+- name: Disable root SSH login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: 'PermitRootLogin no'
+    state: present
+    backup: yes
+  notify: Restart SSH
+
+- name: Disable password authentication (Force SSH Keys)
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    line: 'PasswordAuthentication no'
+    state: present
+  notify: Restart SSH
+
+- name: Ensure sysctl features are optimized for security (Disable IPv6 routing, IP spoofing protection)
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: yes
+  loop:
+    - { key: 'net.ipv4.conf.all.rp_filter', value: '1' }
+    - { key: 'net.ipv4.conf.default.rp_filter', value: '1' }
+    - { key: 'net.ipv4.tcp_syncookies', value: '1' }
+    - { key: 'net.ipv6.conf.all.disable_ipv6', value: '1' }
+
+- name: Ensure auditd is installed and enabled for System Auditing
+  package:
+    name: audit
+    state: present
+
+- name: Start and enable auditd service
+  service:
+    name: auditd
+    state: started
+    enabled: yes

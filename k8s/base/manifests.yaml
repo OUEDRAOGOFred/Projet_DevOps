@@ -1,0 +1,159 @@
+---
+# ==========================================
+# 1. RBAC (Moindre privilège)
+# ==========================================
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ml-api-sa
+  namespace: ml-staging
+# Options de sécurité fortes, empêche de monter des tokens sur les pods non autorisés
+automountServiceAccountToken: false
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ml-api-role
+  namespace: ml-staging
+rules:
+  # L'API ML n'a besoin QUE de lire des secrets précis (par exemple des clés API)
+  - apiGroups: [""]
+    resources: ["secrets", "configmaps"]
+    verbs: ["get", "list"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ml-api-rolebinding
+  namespace: ml-staging
+subjects:
+  - kind: ServiceAccount
+    name: ml-api-sa
+    namespace: ml-staging
+roleRef:
+  kind: Role
+  name: ml-api-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# ==========================================
+# 2. Deployment (Sécurité et Résilience)
+# ==========================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-api
+  namespace: ml-staging
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1       # Pas plus d'1 pod en trop lors de l'update
+      maxUnavailable: 0 # Toujours garder les 2 replicas dispos lors de l'update
+  selector:
+    matchLabels:
+      app: ml-api
+  template:
+    metadata:
+      labels:
+        app: ml-api
+    spec:
+      serviceAccountName: ml-api-sa
+      # SecOps: Définit des contraintes strictes globales pour le pod
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+        - name: ml-api
+          image: ml-api-image:latest # Remplacé par le Jenkinsfile via kustomize
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          # SecOps: Hardening du container
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true  # Empêche l'altération du code à l'exécution
+            capabilities:
+              drop:
+                - ALL # Retire tous les droits root persistants
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+          # L'application écrit en tmp car le root filesystem est en ReadOnly
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp-volume
+          envFrom:
+            - secretRef:
+                name: ml-api-secrets # Les secrets réels ne sont jamais en clair ici !
+          # Sondes pour garantir aucune interruption de service
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: tmp-volume
+          emptyDir: {}
+
+---
+# ==========================================
+# 3. Service (Exposition interne fermée)
+# ==========================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml-api-svc
+  namespace: ml-staging
+spec:
+  type: ClusterIP # Fermé à Internet par défaut, on utilisera un Ingress sécurisé (WAF/TLS) par-dessus
+  ports:
+    - port: 80
+      targetPort: 8000
+  selector:
+    app: ml-api
+
+---
+# ==========================================
+# 4. HorizontalPodAutoscaler (Montée en charge)
+# ==========================================
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ml-api-hpa
+  namespace: ml-staging
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ml-api
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70 # Scale out dès que l'usage CPU moyen > 70%
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80 # Scale out dès que l'usage Memoire moyen > 80%

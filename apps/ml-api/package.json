@@ -1,0 +1,22 @@
+{
+  "name": "ml-api",
+  "version": "1.0.0",
+  "description": "Predictive AI API Backend",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js",
+    "dev": "nodemon src/main.js",
+    "test": "jest --coverage --ci --reporters=default --reporters=jest-junit"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "pg": "^8.11.5"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-junit": "^16.0.0",
+    "nodemon": "^3.1.0",
+    "supertest": "^6.3.4"
+  }
+}

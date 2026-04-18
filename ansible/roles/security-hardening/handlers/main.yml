@@ -1,0 +1,6 @@
+---
+# Handler pour redémarrer le service SSH uniquement si la configuration a changé
+- name: Restart SSH
+  service:
+    name: sshd
+    state: restarted

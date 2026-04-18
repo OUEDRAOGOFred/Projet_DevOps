@@ -1,0 +1,51 @@
+🎓 PROJET FINAL DEVOPS
+Sujet : Conception d’une architecture DevSecOps complète pour une application web IA
+Contexte :
+Une startup locale développe une application d’analyse prédictive (ex : Streamlit ou API ML).
+L’objectif est de construire une plateforme DevSecOps complète conforme au cours. Vous avez la possibilité d’utiliser des outils autresque ceux proposés, tant qu’ils vous permettent d’atteindre les objectifs listés.
+🎯 Exigences obligatoires
+1️⃣ Gestion de version
+ Git structuré
+ Versionnement clair
+2️⃣ CI/CD avec Jenkins
+Pipeline incluant :
+ Build
+ Tests
+ Analyse SonarQube
+ Build Docker
+ Scan sécurité
+ Déploiement automatique staging
+3️⃣ Docker
+ Image optimisée
+ Gestion variables environnement
+ Pas de secrets en clair
+4️⃣ Kubernetes
+ Deployment
+ Service
+ Autoscaling
+ Rolling update
+ Rollback
+5️⃣ Infrastructure as Code
+Terraform :
+ Provision infrastructure
+ Versionnée dans Git
+6️⃣ Automatisation
+Ansible :
+ Déploiement automatisé
+ Structuration en rôles
+7️⃣ Sécurité DevSecOps
+ SonarQube intégré pipeline
+ Scan dynamique
+ RBAC Kubernetes
+ Secrets
+ Limitation ressources
+ Principe moindre privilège
+🎓 Livrables attendus
+1. Code source complet
+2. Pipeline Jenkins fonctionnelle
+3. Dockerfile
+4. Manifests Kubernetes
+5. Terraform
+6. Playbooks Ansible
+7. Politique RBAC
+8. Rapport technique (10–15 pages)
