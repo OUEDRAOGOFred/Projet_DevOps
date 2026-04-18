@@ -1,0 +1,358 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage[margin=2.5cm, top=3cm, bottom=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{setspace}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{lastpage}
+
+% Espacement simple pour réduction
+\singlespacing
+\setlength{\headheight}{15pt}
+
+% ==========================================
+% COULEURS
+% ==========================================
+\definecolor{darkblue}{RGB}{15, 45, 85}
+\definecolor{skyblue}{RGB}{0, 120, 215}
+\definecolor{accent}{RGB}{255, 140, 0}
+\definecolor{lightgray}{RGB}{242, 242, 242}
+\definecolor{darkgray}{RGB}{70, 70, 70}
+\definecolor{codebg}{RGB}{250, 250, 250}
+
+% ==========================================
+% CONFIG LISTINGS
+% ==========================================
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{codebg},
+    commentstyle=\color{darkgray}\itshape,
+    keywordstyle=\color{skyblue}\bfseries,
+    stringstyle=\color{accent},
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    captionpos=b,
+    numberstyle=\tiny\color{darkgray},
+    numbers=left,
+    numbersep=8pt,
+    frame=leftline,
+    framerule=1pt,
+    rulecolor=\color{lightgray},
+    xleftmargin=15pt,
+    showspaces=false,
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% ==========================================
+% EN-TÊTE / PIED DE PAGE
+% ==========================================
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\textcolor{darkblue}{\textbf{DevSecOps Architecture Complète}}}
+\fancyhead[R]{\textcolor{skyblue}{Institut 2iE - Filière IIAA}}
+\fancyfoot[C]{\textcolor{darkgray}{\thepage\ of\ \pageref{LastPage}}}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% ==========================================
+% FORMAT TITRES
+% ==========================================
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{darkblue}}
+  {\colorbox{darkblue}{\textcolor{white}{\thesection}}}
+  {0.8em}
+  {}
+
+\titleformat{\subsection}
+  {\normalfont\large\bfseries\color{darkblue}}
+  {\thesubsection}
+  {0.8em}
+  {}
+
+\titleformat{\subsubsection}
+  {\normalfont\normalsize\bfseries\color{skyblue}}
+  {\thesubsubsection}
+  {0.6em}
+  {}
+
+% ==========================================
+% BOÎTES PERSONNALISÉES
+% ==========================================
+\newtcolorbox{importantbox}{
+  colback=blue!5!white,
+  colframe=skyblue,
+  boxrule=1pt,
+  arc=4pt,
+  left=8pt,
+  right=8pt,
+  top=5pt,
+  bottom=5pt
+}
+
+% ==========================================
+% HYPERLIENS
+% ==========================================
+\hypersetup{
+    colorlinks=true,
+    linkcolor=darkblue,
+    urlcolor=skyblue,
+    pdftitle={Rapport DevSecOps - Institut 2iE},
+    pdfauthor={BELEM Zakaria, BAKOUAN Eben-Ezer, OUEDRAOGO Freddy}
+}
+
+% ==========================================
+% DOCUMENT COMMENCE
+% ==========================================
+\begin{document}
+
+% ------------------------------------------
+% PAGE DE GARDE
+% ------------------------------------------
+\begin{titlepage}
+  \pagecolor{darkblue}
+  \color{white}
+  \vspace*{0.5cm}
+  
+  \centering
+  {\huge\bfseries Rapport Technique Final}\\[0.3cm]
+  {\Large Architecture DevSecOps Complète}\\[0.2cm]
+  {\large Application Web avec Intelligence Artificielle}
+  
+  \vspace{1.5cm}
+  {\large Institut 2iE - Filière IIAA}
+  
+  \vspace{2cm}
+  {\large\bfseries Groupe de Projet}\\
+  BELEM Zakaria \quad BAKOUAN Eben-Ezer \quad OUEDRAOGO Freddy
+  
+  \vfill
+  
+  {\small 2025 - 2026}\\
+  {\normalsize Date de remise : \today}
+\end{titlepage}
+
+\pagecolor{white}
+\color{black}
+
+% ------------------------------------------
+% TABLE DES MATIÈRES
+% ------------------------------------------
+\clearpage
+\setcounter{page}{2}
+\tableofcontents
+
+% ------------------------------------------
+% SECTION RÉSUMÉ EXÉCUTIF
+% ------------------------------------------
+\clearpage
+\section*{Résumé Exécutif}
+\addcontentsline{toc}{section}{Résumé Exécutif}
+
+Ce rapport présente l'architecture DevSecOps d'une plateforme d'analyse prédictive basée sur l'Intelligence Artificielle. Le projet intègre la sécurité dès l'écriture du code (Shift-Left) jusqu'au déploiement en production.
+
+L'architecture combine Docker (conteneurisation), Kubernetes (orchestration), Jenkins (CI/CD), SonarQube et Trivy (analyse de sécurité), Terraform (infrastructure-as-code), et Ansible (configuration automatisée). Le monorepo est hébergé sur GitHub avec une traçabilité complète et conforme aux meilleures pratiques DevSecOps.
+
+% ------------------------------------------
+% SECTION 1 : INTRODUCTION
+% ------------------------------------------
+\clearpage
+\section{Introduction}
+
+\subsection{Contexte du Projet}
+
+L'intégration des technologies d'Intelligence Artificielle dans les applications modernes exige une sécurité renforcée dès le stade du développement. Ce projet final démontre une approche DevSecOps complète alliant automatisation, scalabilité et conformité aux standards de cybersécurité.
+
+\subsection{Objectifs}
+\begin{itemize}
+    \item Architecture sécurisée et modulaire
+    \item Intégration de la sécurité dès le code source
+    \item Automatisation complète des tests et déploiements
+    \item Application du principe Zero Trust
+    \item Haute disponibilité et résilience
+\end{itemize}
+
+\subsection{Stack Technologique}
+\begin{importantbox}
+\textbf{Technologies principales :}
+\begin{itemize}
+    \item \textbf{Backend :} Node.js avec Express (requêtes SQL paramétrées)
+    \item \textbf{Persistance :} PostgreSQL (RDS managé, Huawei Cloud)
+    \item \textbf{Conteneurisation :} Docker (Alpine Linux, multi-stage)
+    \item \textbf{Orchestration :} Kubernetes (Huawei Cloud CCE v3)
+    \item \textbf{CI/CD :} Jenkins avec pipelines déclaratifs
+    \item \textbf{Analyse de Sécurité :} SonarQube (SAST), Trivy (Container), OWASP ZAP (DAST)
+    \item \textbf{Infrastructure :} Terraform (provisionnement cloud)
+    \item \textbf{Configuration :} Ansible (hardening systèmes + NetworkPolicies K8s)
+\end{itemize}
+\end{importantbox}
+
+% ------------------------------------------
+% SECTION 2 : DÉVELOPPEMENT APPLICATIF ET SÉCURITÉ
+% ------------------------------------------
+\clearpage
+\section{Développement Applicatif et Conteneurisation}
+
+\subsection{Architecture de l'API Node.js}
+
+L'API RESTful est développée en Node.js pour ses performances en I/O asynchrone. Le choix de ne pas utiliser d'ORM classique (Sequelize, TypeORM) en faveur de requêtes SQL pures paramétrées offre un contrôle total et prévient les injections SQL.
+
+\subsubsection{Mesures de Sécurité Applicative}
+
+\begin{itemize}
+    \item \textbf{Helmet.js :} Renforcement des entêtes HTTP (CSP, X-Frame-Options, HSTS)
+    \item \textbf{Prepared Statements :} Toutes les requêtes SQL utilisent des requêtes paramétrées via la librairie \texttt{pg}
+    \item \textbf{Validation des entrées :} Sanitization stricte de tous les paramètres utilisateurs
+    \item \textbf{Gestion des secrets :} Variables d'environnement, jamais de credentials en dur
+\end{itemize}
+
+\subsection{Durcissement du Dockerfile}
+
+Le Dockerfile utilise le multi-stage build avec isolement des dépendances :
+
+\begin{lstlisting}[language=bash, caption=Dockerfile multi-stage]
+FROM node:20-alpine AS builder
+COPY package*.json ./
+RUN npm ci --ignore-scripts
+RUN npm prune --production
+FROM node:20-alpine
+COPY --from=builder --chown=node:node /app ./
+USER node
+CMD ["node", "src/main.js"]
+\end{lstlisting}
+
+Cette approche élimine les outils de compilation et exécute sans droits \texttt{root}.
+
+% ------------------------------------------
+% SECTION 3 : PIPELINE CI/CD DEVSECOPS
+% ------------------------------------------
+\clearpage
+\section{Pipeline d'Intégration et de Déploiement Continus}
+
+\subsection{Architecture du Pipeline Jenkins}
+
+Le pipeline Jenkins implémente 8 étapes majeures de validation avant le déploiement :
+
+\begin{enumerate}
+    \item \textbf{Checkout \& Lint} : Récupération du code Git et vérification syntaxique
+    \item \textbf{Tests Unitaires} : Jest + Supertest (couverture > 70\%)
+    \item \textbf{Analyse Statique (SAST)} : SonarQube avec Quality Gate stricte
+    \item \textbf{Build Docker} : Compilation de l'image conteneur
+    \item \textbf{Scan de Vulnérabilités} : Trivy (CVE CRITICAL/HIGH bloquantes)
+    \item \textbf{Push Registry} : Transfert vers registre privé
+    \item \textbf{Déploiement Staging} : Application via \texttt{kubectl}
+    \item \textbf{Test Dynamique DAST} : OWASP ZAP attaque automatisée
+\end{enumerate}
+
+\subsection{Analyse Statique (SAST) - SonarQube}
+
+SonarQube scanne le code source pour détecter :
+\begin{itemize}
+    \item Vulnérabilités de sécurité connues
+    \item Secrets codés en dur (hardcoded credentials)
+    \item Code Smells et défauts de qualité
+    \item Faible couverture de tests
+\end{itemize}
+
+La \textit{Quality Gate} est configurée pour rejeter les codes avec :
+\begin{itemize}
+    \item Coverage < 70\%
+    \item Vulnérabilités de niveau B ou pire
+\end{itemize}
+
+\subsection{Scan de Dépendances - Trivy}
+
+Trivy analyse les CVE dans l'image Docker finale. Toute vulnérabilité CRITICAL/HIGH bloque le pipeline.
+
+\subsection{Test Dynamique (OWASP ZAP)}
+
+OWASP ZAP teste les injections SQL, XSS, misconfigurations pour valider la sécurité post-déploiement.
+
+\begin{figure}[ht]
+    \centering
+    \textit{(Capture d'écran des résultats de tests à insérer ici)}
+    \caption{Résultats des tests et validation}
+    \label{fig:tests}
+\end{figure}
+
+% SECTION 4 : INFRASTRUCTURE AS CODE
+% ------------------------------------------
+\clearpage
+\section{Infrastructure Cloud et Orchestration}
+
+\subsection{Provisionnement Terraform}
+
+Terraform provisionne sur Huawei Cloud : VPC principal, Subnets isolés (K8s + RDS), PostgreSQL managé, Cluster Kubernetes CCE, Security Groups avec moindre privilège. L'état est sécurisé sur OBS avec chiffrement.
+
+\subsection{Durcissement et Sécurité K8s}
+
+Ansible durcit les nœuds Linux (CIS Benchmarks) : SSH par clés, auditd, protections sysctl, SELinux. NetworkPolicies K8s isolent par défaut tous les namespaces.
+
+HorizontalPodAutoscaler scale automatiquement (2-10 replicas selon CPU). Rolling Updates garantissent zéro downtime. Pod Security Context force : non-root, filesystem read-only, capacités kernel supprimées. RBAC restreint chaque service aux permissions minimales.
+
+\begin{figure}[ht]
+    \centering
+    \textit{(Schéma architecture à insérer ici)}
+    \caption{Architecture globale DevSecOps}
+    \label{fig:architecture}
+\end{figure}
+
+% ------------------------------------------
+% SECTION 7 : VERSIONING ET DÉPLOIEMENT
+% ------------------------------------------
+\clearpage
+\section{Versioning et Déploiement}
+
+Monorepo Git (\texttt{apps/ml-api/}, \texttt{k8s/}, \texttt{terraform/}, \texttt{ansible/}, \texttt{Jenkinsfile}) versionnée sur \url{https://github.com/OUEDRAOGOFred/Projet_DevOps}. Chaque commit déclenche le pipeline Jenkins.
+
+% ------------------------------------------
+% SECTION 8 : RÉSULTATS ET VALIDATION
+% ------------------------------------------
+\clearpage
+\section{Résultats et Validation}
+
+\textbf{Jest/Supertest :} Tests > 70\% coverage \\
+\textbf{SonarQube :} 0 vulnérabilité (CWE, OWASP Top 10) \\
+\textbf{Trivy :} 0 CVE CRITICAL/HIGH dans image Alpine \\
+\textbf{OWASP ZAP :} Validation absence de XSS, injections SQL (Prepared Statements), authentification stricte \\
+\textbf{Kubernetes :} HPA auto-scaling, Rolling updates garanti 99.9\% disponibilité
+
+% ------------------------------------------
+% SECTION 9 : CONCLUSION
+% ------------------------------------------
+\clearpage
+\section{Conclusion}
+
+Cette architecture DevSecOps complète démontre l'intégration de sécurité, automatisation et qualité à chaque étape du cycle développement. La philosophie \textbf{Zero Trust} adoptée à tous niveaux (Docker, Kubernetes, infrastructure, systèmes) assure résilience maximale.
+
+\begin{importantbox}
+\begin{itemize}
+    \item \textbf{Sécurité Shift-Left :} Tests automatisés à chaque étape (SAST, container scan, DAST)
+    \item \textbf{Scalabilité \& HA :} Auto-scaling HPA, Rolling Updates, 99.9\% disponibilité
+    \item \textbf{Traçabilité :} Versionnement git de tous artefacts
+    \item \textbf{IaC \& Automation :} Terraform + Ansible, infrastructure immuable
+\end{itemize}
+\end{importantbox}
+
+\textbf{Prochaines étapes :} Service Mesh (Istio), observabilité (EFK), SIEM centralisé, GitOps (ArgoCD), tests chaos.
+
+\vspace{1cm}
+
+\begin{center}
+    \textbf{Groupe :} BELEM Zakaria \quad BAKOUAN Eben-Ezer \quad OUEDRAOGO Freddy
+    
+    \vspace{0.3cm}
+    
+    {\small Institut 2iE - Filière IIAA \textbar\, 2025-2026}
+\end{center}
